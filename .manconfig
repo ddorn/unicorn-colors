@@ -1,0 +1,16 @@
+{
+    "classifiers": [],
+    "data_files": [],
+    "dependancies": [],
+    "description": "Unicorn powered and colored terminal applications",
+    "email": "diego.dorn@free.fr",
+    "fullname": "Diego Dorn",
+    "github_username": "ddorn",
+    "keywords": "",
+    "libname": "unicorn-colors",
+    "package_data": {},
+    "packages": [],
+    "pypi_username": "ddorn",
+    "scripts": [],
+    "version": "0.0.0"
+}
