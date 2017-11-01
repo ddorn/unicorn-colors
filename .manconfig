@@ -1,7 +1,18 @@
 {
-    "classifiers": [],
+    "classifiers": [
+        "Development Status :: 3 - Alpha",
+        "License :: OSI Approved :: MIT License",
+        "Topic :: Terminals",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.6"
+    ],
     "data_files": [],
-    "dependancies": [],
+    "dependancies": [
+        "colorama",
+        "colour"
+    ],
     "description": "Unicorn powered and colored terminal applications",
     "email": "diego.dorn@free.fr",
     "fullname": "Diego Dorn",
@@ -9,7 +20,9 @@
     "keywords": "",
     "libname": "unicorn-colors",
     "package_data": {},
-    "packages": [],
+    "packages": [
+        "unicorn"
+    ],
     "pypi_username": "ddorn",
     "scripts": [],
     "version": "0.0.0"
