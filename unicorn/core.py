@@ -1,7 +1,14 @@
 from typing import Tuple, Optional
 
 import colour
-from . import terminalsize
+
+try:
+    from .terminalsize import get_terminal_size
+except (ModuleNotFoundError, ImportError):
+    from terminalsize import get_terminal_size
+
+import colorama
+colorama.init()
 
 ESC = '\033'
 CLEARFORE = ESC + '[39m'
@@ -17,7 +24,18 @@ def color(text, clr: colour.Color, fore=True):
     )
 
 
-class FuncWrap:
+class MoveFuncWrap:
+    def __call__(self, row, col):
+        print(ESC + '[%d;%dH' % (row, col), end='')
+
+    def __enter__(self):
+        print(ESC + '[s', end='')
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print(ESC + '[u', end='')
+
+
+class ColorFuncWrap:
     def __init__(self, fore: Optional[colour.Color], back: Optional[colour.Color]):
         self.fore = fore
         self.back = back
@@ -48,11 +66,15 @@ class FuncWrap:
 class Terminal:
     @property
     def width(self):
-        return terminalsize.get_terminal_size()[0]
+        return get_terminal_size()[0]
 
     @property
     def height(self):
-        return terminalsize.get_terminal_size()[1]
+        return get_terminal_size()[1]
+
+    @property
+    def size(self):
+        return get_terminal_size()
 
     def __getattr__(self, clr: str):
 
@@ -68,7 +90,7 @@ class Terminal:
         except ValueError:
             raise AttributeError
 
-        wrap = FuncWrap(fore, back)
+        wrap = ColorFuncWrap(fore, back)
 
         setattr(self, clr, wrap)
 
@@ -76,8 +98,10 @@ class Terminal:
 
     def rgb(self, r, g, b):
         color = '#' + ''.join(map(lambda x: hex(x)[2:], (r, g, b)))
-        return FuncWrap(colour.Color(color), None)
+        return ColorFuncWrap(colour.Color(color), None)
 
     def on_rgb(self, r, g, b):
         color = '#' + ''.join(map(lambda x: hex(x)[2:], (r, g, b)))
-        return FuncWrap(None, colour.Color(color))
+        return ColorFuncWrap(None, colour.Color(color))
+
+    move = MoveFuncWrap()
