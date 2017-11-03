@@ -1,3 +1,4 @@
+import contextlib
 from typing import Tuple, Optional
 
 import colour
@@ -22,6 +23,14 @@ def color(text, clr: colour.Color, fore=True):
         fore=38 if fore else 48,
         text=text
     )
+
+
+class VirtualScreenWrap:
+    def __enter__(self):
+        print(ESC + '[?1049h', end='')
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print(ESC + '[?1049l', end='')
 
 
 class MoveFuncWrap:
@@ -101,7 +110,9 @@ class Terminal:
         return ColorFuncWrap(colour.Color(color), None)
 
     def on_rgb(self, r, g, b):
-        color = '#' + ''.join(map(lambda x: hex(x)[2:], (r, g, b)))
+        color = '#{}{}{}'.format(*map(lambda x: ('0' if x < 16 else '') + hex(x)[2:], (r, g, b))).replace(' ', '0')
         return ColorFuncWrap(None, colour.Color(color))
 
     move = MoveFuncWrap()
+
+    virtual_screen = VirtualScreenWrap()

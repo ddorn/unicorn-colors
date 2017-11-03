@@ -15,7 +15,7 @@ if __name__ == '__main__':
     maxi = TERM.width - 20, TERM.height - 10
     random_pos = lambda: (randint(mini[1], maxi[1]), randint(mini[0], maxi[0]))
 
-    with TERM.move:
+    with TERM.virtual_screen:
 
         try:
             while True:
