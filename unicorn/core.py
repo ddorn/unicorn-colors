@@ -33,6 +33,18 @@ class VirtualScreenWrap:
         print(ESC + '[?1049l', end='')
 
 
+class HideCursorFuncWrap:
+
+    def __call__(self, *args, **kwargs):
+        print(ESC + '[?25l', end='')
+
+    def __enter__(self):
+        self()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        print(ESC + '[?25h', end='')
+
+
 class MoveFuncWrap:
     def __call__(self, row, col):
         print(ESC + '[%d;%dH' % (row, col), end='')
@@ -113,6 +125,26 @@ class Terminal:
         color = '#{}{}{}'.format(*map(lambda x: ('0' if x < 16 else '') + hex(x)[2:], (r, g, b))).replace(' ', '0')
         return ColorFuncWrap(None, colour.Color(color))
 
+    def scroll(self, row):
+        """
+        A posive number will move the text up and create space at the bottom.
+        A negative will do the opposite.
+        """
+        if row > 0:
+            print(ESC + '[%sS' % row, end='')
+        if row < 0:
+            print(ESC + '[%sT' % -row, end='')
+
     move = MoveFuncWrap()
 
     virtual_screen = VirtualScreenWrap()
+
+    hide_cursor = HideCursorFuncWrap()
+
+    @contextlib.contextmanager
+    def mvh(self):
+        """Save the cursor location, enter virtual screen and hide the cursor"""
+        with self.move:
+            with self.virtual_screen:
+                with self.hide_cursor:
+                    yield
